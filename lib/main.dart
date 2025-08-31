@@ -9,7 +9,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Listado de Lenguajes de programación',
       home: MyHomePage(title: 'Lenguajes de programación'),
     );
@@ -27,14 +28,42 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0; // 0: Lenguajes, 1: Cards
 
-  final List<String> languages = [
-    'Dart',
-    'Python',
-    'Java',
-    'C++',
-    'JavaScript',
-    'Python',
-    'Swift',
+  final List<Map<String, String>> languages = [
+    {
+      'name': 'Dart',
+      'image': 'assets/img/Dart.jpg',
+      'desc': 'Lenguaje optimizado para apps móviles y web.',
+    },
+    {
+      'name': 'Python',
+      'image': 'assets/img/python.jpg',
+      'desc': 'Popular para ciencia de datos y automatización.',
+    },
+    {
+      'name': 'Java',
+      'image': 'assets/img/Java.png',
+      'desc': 'Robusto y usado en aplicaciones empresariales.',
+    },
+    {
+      'name': 'C++',
+      'image': 'assets/img/C++.jpg',
+      'desc': 'Potente para sistemas y videojuegos.',
+    },
+    {
+      'name': 'JavaScript',
+      'image': 'assets/img/Javascript.webp',
+      'desc': 'Esencial para desarrollo web.',
+    },
+    {
+      'name': 'Rust',
+      'image': 'assets/img/Rust.jpg',
+      'desc': 'Moderno, seguro y rápido.',
+    },
+    {
+      'name': 'Swift',
+      'image': 'assets/img/Swift-Logo.jpg',
+      'desc': 'Lenguaje de Apple para iOS y macOS.',
+    },
   ];
 
   @override
@@ -49,7 +78,14 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Selecciona tu lenguaje de programación favorito.'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
           ),
         ],
         leading: Builder(
@@ -67,21 +103,60 @@ class _MyHomePageState extends State<MyHomePage> {
           ? ListView.builder(
               itemCount: languages.length,
               itemBuilder: (context, index) {
+                final lang = languages[index];
                 return ListTile(
-                  leading: const Icon(Icons.code),
-                  title: Text(languages[index]),
+                  leading: Image.asset(
+                    lang['image']!,
+                    width: 40,
+                    height: 40,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.code),
+                  ),
+                  title: Text(lang['name']!),
                 );
               },
             )
           : ListView.builder(
               itemCount: languages.length,
               itemBuilder: (context, index) {
+                final lang = languages[index];
                 return Card(
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
-                    leading: const Icon(Icons.code),
-                    title: Text(languages[index]),
-                    subtitle: const Text('Lenguaje de programación'),
+                    leading: Image.asset(
+                      lang['image']!,
+                      width: 40,
+                      height: 40,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.code),
+                    ),
+                    title: Text(lang['name']!),
+                    subtitle: Text(lang['desc']!),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(lang['name']!),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                lang['image']!,
+                                width: 80,
+                                height: 80,
+                                errorBuilder: (context, error, stackTrace) => const Icon(Icons.code, size: 80),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(lang['desc']!),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              child: const Text('Cerrar'),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 );
               },
